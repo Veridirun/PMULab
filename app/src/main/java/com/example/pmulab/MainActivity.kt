@@ -1,5 +1,6 @@
 package com.example.pmulab
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,8 +21,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,14 +66,7 @@ class AdvertisementViewModel : ViewModel(){
     }
 
     fun likeAdvertisement(advertisement: AdvertisementItem) {
-        val updatedList = displayedAdvertisements.map {
-            if (it.id == advertisement.id) {
-                it.copy(likes = it.likes + 1)
-            } else {
-                it
-            }
-        }
-        displayedAdvertisements = updatedList
+        advertisement.likes++
     }
 
     fun updateRandomNews() {
@@ -83,8 +79,11 @@ class AdvertisementViewModel : ViewModel(){
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 private fun Advertisement(modifier: Modifier = Modifier, advertisement: AdvertisementItem, onLike: (AdvertisementItem) -> Unit) {
+    val likes = mutableIntStateOf(advertisement.likes)
+
     Card(
         shape = RoundedCornerShape(15.dp),
         modifier = modifier
@@ -111,14 +110,17 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
                 Box(
                     modifier = Modifier
                         .background(Color.Cyan)
-                        .clickable { onLike(advertisement) }
+                        .clickable {
+                            onLike(advertisement)
+                            likes.intValue ++
+                        }
                         .padding(8.dp)
                         .weight(1f),
                         contentAlignment = Alignment.Center
 
                 ) {
                     Text(
-                        text = "Likes: ${advertisement.likes}",
+                        text = "Likes: ${likes.intValue}",
                         color = Color.White
                     )
                 }
