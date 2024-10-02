@@ -1,6 +1,7 @@
 package com.example.pmulab
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.view.WindowManager
@@ -31,6 +32,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlin.random.Random
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.ui.viewinterop.AndroidView
 
 
 data class AdvertisementItem(
@@ -124,7 +131,7 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
 
 
     @Composable
-    private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel()) {
+    private fun AdvertisementWindow(onChangeView: () -> Unit,viewModel: AdvertisementViewModel = viewModel()) {
         LaunchedEffect(Unit) {
             while (true) {
                 delay(5000)
@@ -140,23 +147,60 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
                 Advertisement(modifier = Modifier.weight(1f), advertisement = viewModel.displayedAdvertisements[2], onLike = { viewModel.likeAdvertisement(it) })
                 Advertisement(modifier = Modifier.weight(1f), advertisement = viewModel.displayedAdvertisements[3], onLike = { viewModel.likeAdvertisement(it) })
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Button(onClick = onChangeView) {
+                    Text(text = "Переключиться на OpenGL")
+                }
+            }
         }
     }
 
 
 class MainActivity : ComponentActivity() {
+    private var showNews by mutableStateOf(true)
     override fun onCreate(savedInstanceState: Bundle?) {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState)
-        //setContent {
-        //    AdvertisementWindow()
-        //}
+        setContent {
+            if(showNews) {
+                AdvertisementWindow(onChangeView = { showNews = false })
+            } else {
+                OpenGLView(context = this, onChangeView = { showNews = true })
+            }
+        }
 
 
-        val g = GLSurfaceView(this)
-        g.setRenderer(MyRenderer(this, resources))
-        g.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
-        setContentView(g)
+
+    }
+    @Composable
+    fun OpenGLView(context: Context, onChangeView: () -> Unit) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            AndroidView(factory = {
+                GLSurfaceView(context).apply {
+                    setEGLContextClientVersion(1)
+                    setRenderer(MyRenderer(context, resources))
+                    renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
+                }
+            }, modifier = Modifier.fillMaxSize())
+
+            // Добавляем кнопку для перехода обратно на экран с новостями
+            Button(
+                onClick = { onChangeView() },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
+            ) {
+                Text("Назад к новостям")
+            }
+        }
     }
 }
+
+
 

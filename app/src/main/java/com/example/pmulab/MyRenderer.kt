@@ -19,13 +19,9 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
     val textures: IntArray = IntArray(1) { 0 }
     var c = context
 
-
     var cube: Cube
     var slab: Slab
 
-    var displayMetrics: DisplayMetrics = context.resources.displayMetrics
-    var dpHeight: Float = displayMetrics.heightPixels / displayMetrics.density
-    var dpWidth: Float = displayMetrics.widthPixels / displayMetrics.density
     init{
         cube = Cube()
         slab = Slab()
@@ -81,8 +77,6 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glDisable(GL10.GL_TEXTURE_2D)
 
         gl.glEnable(GL10.GL_DEPTH_TEST);
-        //GLU.gluLookAt(gl,0f,1f,-2f,0f,2f,-1f,0f,1f,0f);
-        //gl.glOrthof(-10f,10f, -5f,5f,5f,-5f);
 
         gl.glTranslatef(0f,0f,1f);
         gl.glRotatef(p,1f,1f,1f);
