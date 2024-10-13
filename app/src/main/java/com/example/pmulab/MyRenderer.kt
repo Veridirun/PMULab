@@ -113,7 +113,7 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glLoadIdentity()
 
         // Настройка камеры под углом
-        GLU.gluLookAt(gl, 20.0f, 40.0f, 10.0f,   // Позиция камеры
+        GLU.gluLookAt(gl, 20.0f, 40.0f, 00.0f,   // Позиция камеры
             0.0f, 0.0f, 0.0f,          // Камера смотрит на Солнце
             0.0f, 0.0f, 1.0f)
 
@@ -148,8 +148,8 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
 
         // Отрисовка Луны
         gl.glPushMatrix()
-        gl.glRotatef(angleMoon, 0.0f, 1.0f, 0.0f) // Вращение Луны вокруг своей оси
-        gl.glTranslatef(0.5f, 0.0f, 0.0f) // Позиция Луны относительно Земли (уменьшено)
+        gl.glRotatef(angleMoon, 1.0f, 0.0f, 0.0f) // Вращение Луны вокруг своей оси
+        gl.glTranslatef(0.0f, 0.5f, 0.0f) // Позиция Луны относительно Земли (уменьшено)
         moon.draw(gl)
         gl.glPopMatrix()
         gl.glPopMatrix()
