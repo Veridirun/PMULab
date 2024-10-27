@@ -33,9 +33,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.ui.viewinterop.AndroidView
 
@@ -171,7 +173,7 @@ class MainActivity : ComponentActivity() {
             if(showNews) {
                 AdvertisementWindow(onChangeView = { showNews = false })
             } else {
-                OpenGLView(context = this, onChangeView = { showNews = true })
+                OpenGLView(context = this, MyRenderer(this, resources),  onChangeView = { showNews = true })
             }
         }
 
@@ -179,12 +181,12 @@ class MainActivity : ComponentActivity() {
 
     }
     @Composable
-    fun OpenGLView(context: Context, onChangeView: () -> Unit) {
+    fun OpenGLView(context: Context, renderer: MyRenderer, onChangeView: () -> Unit) {
         Box(modifier = Modifier.fillMaxSize()) {
             AndroidView(factory = {
                 GLSurfaceView(context).apply {
                     setEGLContextClientVersion(1)
-                    setRenderer(MyRenderer(context, resources))
+                    setRenderer(renderer)
                     renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
                 }
             }, modifier = Modifier.fillMaxSize())
@@ -198,8 +200,35 @@ class MainActivity : ComponentActivity() {
             ) {
                 Text("Назад к новостям")
             }
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+
+            ) {
+                Button(
+                    onClick = { renderer.previousPlanet() },
+                    modifier = Modifier.size(80.dp, 40.dp)
+                ) {
+                    Text("<--")
+                }
+                Button(
+                    onClick = { renderer.nextPlanet() },
+                    modifier = Modifier.size(80.dp, 40.dp)
+                ) {
+                    Text("-->")
+                }
+                Button(
+                    onClick = {  },
+                    modifier = Modifier.size(80.dp, 40.dp)
+                ) {
+                    Text("Инф")
+                }
+            }
         }
     }
+
 }
 
 

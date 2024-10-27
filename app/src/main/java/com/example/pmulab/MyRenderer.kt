@@ -4,15 +4,20 @@ import android.content.Context
 import android.content.res.Resources
 import android.opengl.GLSurfaceView
 import android.opengl.GLU
+import android.util.Log
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import kotlin.math.abs
+import kotlin.math.sin
 
 
 class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Renderer {
     var context = context
 
+    lateinit var cube: Cube
 
     lateinit var background: Slab
+
     lateinit var sun: Sphere
     lateinit var earth: Sphere
     lateinit var moon: Sphere
@@ -35,9 +40,30 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
     private var angleMercuryOrbit = 0.0f
     private var angleUranusOrbit = 0.0f
     private var angleNeptuneOrbit = 0.0f
+    private var alphaAngle : Float = 0.0f
+    private var alpha : Float = 0.0f
+
+    private var selectedPlanet = 0;
+
+    fun previousPlanet() {
+        selectedPlanet--;
+        if(selectedPlanet<0){
+            selectedPlanet = 10; //11-я планета
+        }
+        Log.w("PMUrenderer", "planet = $selectedPlanet");
+    }
+
+    fun nextPlanet() {
+        selectedPlanet++;
+        if(selectedPlanet>10){
+            selectedPlanet = 0; //1-я планета
+        }
+        Log.w("PMUrenderer", "planet = $selectedPlanet");
+    }
 
     init{
         background = Slab()
+        cube = Cube()
         sun = Sphere(1f)
         earth = Sphere(0.25f)
         moon = Sphere(0.05f)
@@ -97,6 +123,7 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glMatrixMode(GL10.GL_PROJECTION)
         gl.glPopMatrix()
     }
+
     override fun onDrawFrame(gl: GL10) {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT or GL10.GL_DEPTH_BUFFER_BIT)
 
@@ -117,13 +144,14 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
             0.0f, 0.0f, 0.0f,          // Камера смотрит на Солнце
             0.0f, 0.0f, 1.0f)
 
-        gl.glPushMatrix()
 
+        gl.glPushMatrix()
         gl.glTranslatef(0.0f, 0.0f, 0.0f) // Позиция солнца
         // Отрисовка Солнца
         gl.glPushMatrix()
         gl.glRotatef(angleSun, 0.0f, 1.0f, 0.0f) // Вращение вокруг своей оси
         sun.draw(gl)
+        if(selectedPlanet == 0) cube.draw(gl, alpha)
         gl.glPopMatrix()
 
         // Отрисовка Меркурия
@@ -131,6 +159,11 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glRotatef(angleMercuryOrbit, 0.0f, 1.0f, 0.0f) // Вращение вокруг Солнца
         gl.glTranslatef(2.0f, 0.0f, 0.0f) // Позиция Меркурия
         mercury.draw(gl)
+        if(selectedPlanet == 1) {
+            gl.glScalef(0.5f, 0.5f, 0.5f)
+            cube.draw(gl, alpha)
+            gl.glScalef(1f, 1f, 1f)
+        }
         gl.glPopMatrix()
 
         // Отрисовка Венеры
@@ -138,6 +171,11 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glRotatef(angleVenusOrbit, 0.0f, 1.0f, 0.0f) // Вращение вокруг Солнца
         gl.glTranslatef(4.0f, 0.0f, 0.0f) // Позиция Венеры
         venus.draw(gl)
+        if(selectedPlanet == 2) {
+            gl.glScalef(0.5f, 0.5f, 0.5f)
+            cube.draw(gl, alpha)
+            gl.glScalef(1f, 1f, 1f)
+        }
         gl.glPopMatrix()
 
         // Отрисовка Земли
@@ -145,12 +183,22 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glRotatef(angleEarthOrbit, 0.0f, 1.0f, 0.0f) // Вращение вокруг Солнца
         gl.glTranslatef(6.0f, 0.0f, 0.0f) // Позиция Земли
         earth.draw(gl)
+        if(selectedPlanet == 3) {
+            gl.glScalef(0.5f, 0.5f, 0.5f)
+            cube.draw(gl, alpha)
+            gl.glScalef(1f, 1f, 1f)
+        }
 
         // Отрисовка Луны
         gl.glPushMatrix()
         gl.glRotatef(angleMoon, 1.0f, 0.0f, 0.0f) // Вращение Луны вокруг своей оси
         gl.glTranslatef(0.0f, 0.5f, 0.0f) // Позиция Луны относительно Земли (уменьшено)
         moon.draw(gl)
+        if(selectedPlanet == 4) {
+            gl.glScalef(0.4f, 0.4f, 0.4f)
+            cube.draw(gl, alpha)
+            gl.glScalef(1f, 1f, 1f)
+        }
         gl.glPopMatrix()
         gl.glPopMatrix()
 
@@ -159,6 +207,11 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glRotatef(angleMarsOrbit, 0.0f, 1.0f, 0.0f) // Вращение вокруг Солнца
         gl.glTranslatef(7.0f, 0.0f, 0.0f) // Позиция Марса
         mars.draw(gl)
+        if(selectedPlanet == 5) {
+            gl.glScalef(0.5f, 0.5f, 0.5f)
+            cube.draw(gl, alpha)
+            gl.glScalef(1f, 1f, 1f)
+        }
         gl.glPopMatrix()
 
         // Отрисовка Юпитера
@@ -166,6 +219,11 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glRotatef(angleJupiterOrbit, 0.0f, 1.0f, 0.0f) // Вращение вокруг Солнца
         gl.glTranslatef(8.0f, 0.0f, 0.0f) // Позиция Юпитера
         jupiter.draw(gl)
+        if(selectedPlanet == 6) {
+            gl.glScalef(0.5f, 0.5f, 0.5f)
+            cube.draw(gl, alpha)
+            gl.glScalef(1f, 1f, 1f)
+        }
         gl.glPopMatrix()
 
         // Отрисовка Сатурна
@@ -173,6 +231,11 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glRotatef(angleSaturnOrbit, 0.0f, 1.0f, 0.0f) // Вращение вокруг Солнца
         gl.glTranslatef(10.0f, 0.0f, 0.0f) // Позиция Сатурна
         saturn.draw(gl)
+        if(selectedPlanet == 7) {
+            gl.glScalef(0.8f, 0.8f, 0.8f)
+            cube.draw(gl, alpha)
+            gl.glScalef(1f, 1f, 1f)
+        }
         gl.glPopMatrix()
 
         // Отрисовка Урана
@@ -180,6 +243,11 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glRotatef(angleUranusOrbit, 0.0f, 1.0f, 0.0f) // Вращение вокруг Солнца
         gl.glTranslatef(12.0f, 0.0f, 0.0f) // Позиция Урана
         uranus.draw(gl)
+        if(selectedPlanet == 8) {
+            gl.glScalef(0.5f, 0.5f, 0.5f)
+            cube.draw(gl, alpha)
+            gl.glScalef(1f, 1f, 1f)
+        }
         gl.glPopMatrix()
 
         // Отрисовка Нептуна
@@ -187,11 +255,16 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         gl.glRotatef(angleNeptuneOrbit, 0.0f, 1.0f, 0.0f) // Вращение вокруг Солнца
         gl.glTranslatef(14.0f, 0.0f, 0.0f) // Позиция Нептуна
         neptune.draw(gl)
+        if(selectedPlanet == 9) {
+            gl.glScalef(0.5f, 0.5f, 0.5f)
+            cube.draw(gl, alpha)
+            gl.glScalef(1f, 1f, 1f)
+        }
         gl.glPopMatrix()
 
         angleSun += 0.1f
         angleEarth += 2.0f
-        angleMoon += 7.0f
+        angleMoon += 2.0f
         angleEarthOrbit += 0.2f
         angleVenusOrbit += 0.3f
         angleMarsOrbit += 0.2f
@@ -200,6 +273,8 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
         angleMercuryOrbit += 0.4f
         angleUranusOrbit += 0.05f
         angleNeptuneOrbit += 0.03f
+        alphaAngle = if (alphaAngle > 6.28f) 0.0f else alphaAngle + 0.01f
+        alpha = 0.5f*abs(sin(alphaAngle))
     }
 }
 
