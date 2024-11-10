@@ -11,7 +11,7 @@ import kotlin.math.abs
 import kotlin.math.sin
 
 
-class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Renderer {
+class MyRenderer(context: Context) : GLSurfaceView.Renderer {
     var context = context
 
     lateinit var cube: Cube
@@ -44,6 +44,10 @@ class MyRenderer(context: Context, resources: Resources) : GLSurfaceView.Rendere
     private var alpha : Float = 0.0f
 
     private var selectedPlanet = 0;
+
+    fun getPlanet(): Int {
+        return selectedPlanet
+    }
 
     fun previousPlanet() {
         selectedPlanet--;

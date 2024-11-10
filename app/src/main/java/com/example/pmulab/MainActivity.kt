@@ -2,6 +2,7 @@ package com.example.pmulab
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.view.WindowManager
@@ -173,7 +174,7 @@ class MainActivity : ComponentActivity() {
             if(showNews) {
                 AdvertisementWindow(onChangeView = { showNews = false })
             } else {
-                OpenGLView(context = this, MyRenderer(this, resources),  onChangeView = { showNews = true })
+                OpenGLView(context = this, MyRenderer(this),  onChangeView = { showNews = true })
             }
         }
 
@@ -220,7 +221,12 @@ class MainActivity : ComponentActivity() {
                     Text("-->")
                 }
                 Button(
-                    onClick = {  },
+                    onClick = {
+                        if (renderer.getPlanet() == 4) {
+                            val intent = Intent(context, MoonActivity::class.java)
+                            context.startActivity(intent)
+                        }
+                    },
                     modifier = Modifier.size(80.dp, 40.dp)
                 ) {
                     Text("Инф")

@@ -131,4 +131,5 @@ class Sphere(private val radius: Float) {
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY)
         gl.glDisable(GL10.GL_TEXTURE_2D)
     }
+
 }
