@@ -13,6 +13,7 @@
         android:theme="@style/Theme.PMULab"
         tools:targetApi="31">
         <activity android:name=".MoonActivity" />
+        <activity android:name=".NeptuneActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

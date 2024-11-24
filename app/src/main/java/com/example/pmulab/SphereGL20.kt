@@ -123,7 +123,7 @@ class SphereGL20(private val radius: Float, private val stacks: Int = 18, privat
             varying vec2 vTexCoord; // Текстурные координаты
             
             void main() {
-                // Направление на источник света
+                // Вектор, направленный от текущей позиции к источнику света
                 vec3 lightDir = normalize(uLightPos - vPosition);
                 
                 // Диффузное освещение (освещенность, пропорциональная углу между нормалью и направлением на свет)
@@ -134,7 +134,7 @@ class SphereGL20(private val radius: Float, private val stacks: Int = 18, privat
                 vec4 textureColor = texture2D(uTexture, vTexCoord);
             
                 // Итоговый цвет: освещенность по модели Фонга + текстура
-                gl_FragColor = diffuse * textureColor + 0.1 * uColor; // Добавление амбиентного света (0.1 * uColor)
+                gl_FragColor = diffuse * textureColor; // Добавление света (0.1 * uColor)
             }
         """
 

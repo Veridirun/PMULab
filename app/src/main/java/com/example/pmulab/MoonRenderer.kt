@@ -27,10 +27,8 @@ class MoonRenderer(private val context: Context) : GLSurfaceView.Renderer {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
 
-        // Создаем объект луны
         moon = SphereGL20(1.0f)
 
-        // Устанавливаем камеру
         Matrix.setLookAtM(
             viewMatrix, 0,
             0.0f, 0.0f, 5.0f,  // Позиция камеры

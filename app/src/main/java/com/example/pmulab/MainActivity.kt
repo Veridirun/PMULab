@@ -226,6 +226,10 @@ class MainActivity : ComponentActivity() {
                             val intent = Intent(context, MoonActivity::class.java)
                             context.startActivity(intent)
                         }
+                        if (renderer.getPlanet() == 9) {
+                            val intent = Intent(context, NeptuneActivity::class.java)
+                            context.startActivity(intent)
+                        }
                     },
                     modifier = Modifier.size(80.dp, 40.dp)
                 ) {
