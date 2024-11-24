@@ -104,7 +104,7 @@ class SphereWater(
                     val first = (lat * (longitudeBands + 1) + long).toShort()
                     val second = (first + longitudeBands + 1).toShort()
 
-                    // Первый треугольник
+                    // Первое треугольник
                     indices[indexIndex++] = first
                     indices[indexIndex++] = second
                     indices[indexIndex++] = (first + 1).toShort()
@@ -181,8 +181,8 @@ class SphereWater(
             varying vec2 v_TexCoord;
 
             void main() {
-                float waveHeightX = sin(a_Position.x * 10.0 + u_Time) * 0.05; 
-                float waveHeightZ = sin(a_Position.z * 10.0 + u_Time) * 0.05; 
+                float waveHeightX = sin(a_Position.x * 10.0 + u_Time) * 0.1; 
+                float waveHeightZ = sin(a_Position.z * 10.0 + u_Time) * 0.1; 
                 float waveHeight = waveHeightX + waveHeightZ;
 
                 vec4 modPosition = a_Position;
@@ -205,3 +205,4 @@ class SphereWater(
         """
     }
 }
+
