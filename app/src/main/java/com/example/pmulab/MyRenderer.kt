@@ -28,6 +28,8 @@ class MyRenderer(context: Context) : GLSurfaceView.Renderer {
     lateinit var mercury: Sphere
     lateinit var uranus: Sphere
     lateinit var neptune: Sphere
+    lateinit var blackHole: Sphere
+    private var blackHolePosition = floatArrayOf(-20.0f, 0.0f, 0.0f) // Начальная позиция
 
     private var angleSun = 0.0f
     private var angleEarth = 0.0f
@@ -40,6 +42,7 @@ class MyRenderer(context: Context) : GLSurfaceView.Renderer {
     private var angleMercuryOrbit = 0.0f
     private var angleUranusOrbit = 0.0f
     private var angleNeptuneOrbit = 0.0f
+    private var blackHoleSpeed = 0.1f
     private var alphaAngle : Float = 0.0f
     private var alpha : Float = 0.0f
 
@@ -78,6 +81,7 @@ class MyRenderer(context: Context) : GLSurfaceView.Renderer {
         mercury = Sphere(0.15f)
         uranus = Sphere(0.3f)
         neptune = Sphere(0.3f)
+        blackHole = Sphere(0.4f) // Радиус черной дыры
     }
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
         background.loadTexture(gl, context, R.drawable.background)
@@ -91,6 +95,8 @@ class MyRenderer(context: Context) : GLSurfaceView.Renderer {
         mercury.loadTexture(gl, context, R.drawable.mercury)
         uranus.loadTexture(gl, context, R.drawable.uranus)
         neptune.loadTexture(gl, context, R.drawable.neptune)
+        blackHole.loadTexture(gl, context, R.drawable.black_hole)
+
     }
     var aspectRatio: Float = 1.0f
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
@@ -265,6 +271,21 @@ class MyRenderer(context: Context) : GLSurfaceView.Renderer {
             gl.glScalef(1f, 1f, 1f)
         }
         gl.glPopMatrix()
+
+        // Обновляем позицию черной дыры
+        blackHolePosition[0] += blackHoleSpeed // Двигаем вдоль оси X
+        blackHolePosition[2] = sin(alphaAngle*5)*3
+
+        // Если черная дыра выходит за пределы системы, сбрасываем позицию
+                if (blackHolePosition[0] > 20.0f) {
+                    blackHolePosition[0] = -20.0f
+                }
+
+        // Рисуем черную дыру
+                gl.glPushMatrix()
+                gl.glTranslatef(blackHolePosition[0], blackHolePosition[1], blackHolePosition[2])
+                blackHole.draw(gl)
+                gl.glPopMatrix()
 
         angleSun += 0.1f
         angleEarth += 2.0f
